@@ -4,8 +4,8 @@ interface IHttpException {
 }
 
 export class HttpException extends Error {
-  public message: string;
-  public id: number;
+  message: string;
+  id: number;
 
   constructor(
     public status: number,

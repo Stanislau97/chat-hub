@@ -1,8 +1,13 @@
 import ChatService from '@services/chat.services';
+import HubService from '@websockets/hub.service';
 import { Request, Response, NextFunction } from 'express';
 
 class ChatController {
-  private chatService = new ChatService();
+  private chatService: ChatService;
+
+  constructor(hub: HubService) {
+    this.chatService = new ChatService(hub);
+  }
 
   getChat = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

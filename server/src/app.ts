@@ -1,20 +1,31 @@
 import express from 'express';
-import { PORT, CORS_ORIGIN, CORS_METHODS } from '@config';
+import http from 'http';
+import WebSocket from 'ws';
 import cors from 'cors';
+import { PORT, CORS_ORIGIN, CORS_METHODS } from '@config';
 import { errorMiddleware } from '@middlewares/error.middleware';
+import HubService from '@websockets/hub.service';
+import { IRoute } from '@interfaces';
+import ChatRoute from '@routes/chat.route';
 
 class App {
-  public app: express.Application;
-  public env: string;
-  public port: string | number;
+  private app: express.Application;
+  private server: http.Server;
+  private port: string | number;
+  private wss: WebSocket.Server;
+  private hub: HubService;
 
-  constructor(routes) {
+  constructor() {
     this.app = express();
     this.port = PORT;
+    this.server = http.createServer(this.app);
+    this.wss = new WebSocket.Server({ server: this.server });
+    this.hub = new HubService(this.wss);
 
     this.initializeMiddlewares();
-    this.initializeRoutes(routes);
+    this.initializeRoutes();
     this.initializeErrorHandling();
+    this.initializeWebSocket();
   }
 
   private logServerStart() {
@@ -45,14 +56,18 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
   }
 
-  private initializeRoutes(routes): void {
-    routes.forEach(route => {
+  private initializeRoutes(): void {
+    [new ChatRoute(this.hub)].forEach(route => {
       this.app.use('/api/v1/', route.router);
     });
   }
 
   private initializeErrorHandling(): void {
     this.app.use(errorMiddleware);
+  }
+
+  private initializeWebSocket(): void {
+    this.hub.setup();
   }
 }
 

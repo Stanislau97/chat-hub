@@ -1,13 +1,16 @@
 import ChatController from '@controllers/chat.controller';
+import { IRoute } from '@interfaces';
+import HubService from '@websockets/hub.service';
 import { Router } from 'express';
 
-class ChatRoute {
-  public path = '/chat';
+class ChatRoute implements IRoute {
+  path = '/chat';
+  router = Router();
+  
+  private chatController: ChatController;
 
-  public router = Router();
-  public chatController = new ChatController();
-
-  constructor() {
+  constructor(hub: HubService) {
+    this.chatController = new ChatController(hub);
     this.initializeRoutes();
   }
 

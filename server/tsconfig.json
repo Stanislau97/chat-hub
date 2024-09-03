@@ -9,7 +9,8 @@
       "@routes/*": ["routes/*"],
       "@config/*": ["config/*"],
       "@middlewares/*": ["middlewares/*"],
-      "@exceptions/*": ["exceptions/*"]
+      "@exceptions/*": ["exceptions/*"],
+      "@websockets/*": ["websockets/*"]
     },
     "target": "es2022",
     "esModuleInterop": true,
