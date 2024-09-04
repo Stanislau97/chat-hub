@@ -5,39 +5,33 @@ import cors from 'cors';
 import { PORT, CORS_ORIGIN, CORS_METHODS } from '@config';
 import { errorMiddleware } from '@middlewares/error.middleware';
 import HubService from '@websockets/hub.service';
-import { IRoute } from '@interfaces';
 import ChatRoute from '@routes/chat.route';
 
 class App {
   private app: express.Application;
   private server: http.Server;
-  private port: string | number;
-  private wss: WebSocket.Server;
   private hub: HubService;
 
   constructor() {
     this.app = express();
-    this.port = PORT;
     this.server = http.createServer(this.app);
-    this.wss = new WebSocket.Server({ server: this.server });
-    this.hub = new HubService(this.wss);
 
     this.initializeMiddlewares();
+    this.initializeWebSocket();
     this.initializeRoutes();
     this.initializeErrorHandling();
-    this.initializeWebSocket();
   }
 
   private logServerStart() {
     console.info(`╭───────────────────────────────────────────────────╮`);
     console.info(`│                                                   │`);
-    console.info(`│            App listening at port ${this.port}!            │`);
+    console.info(`│            App listening at port ${PORT}!            │`);
     console.info(`│                                                   │`);
     console.info(`╰───────────────────────────────────────────────────╯`);
   }
 
   listen(): void {
-    this.app.listen(this.port, () => this.logServerStart());
+    this.server.listen(PORT, () => this.logServerStart());
   }
 
   getServer(): express.Application {
@@ -67,6 +61,8 @@ class App {
   }
 
   private initializeWebSocket(): void {
+    const wss = new WebSocket.Server({ server: this.server });
+    this.hub = new HubService(wss);
     this.hub.setup();
   }
 }

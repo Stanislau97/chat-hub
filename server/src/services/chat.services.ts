@@ -1,22 +1,26 @@
+import { INotification } from "@models";
 import HubService from "@websockets/hub.service";
 
 class ChatService {
   private readonly MAX_MESSAGES: number = 9;
-  private readonly messages: string[] = [];
+  private readonly messages: INotification[] = [];
 
   constructor(private hub: HubService) {
   }
 
-  getChat(): string[] {
+  getMessages(): INotification[] {
     return this.messages;
   }
 
-  setChat(message: string): void {
+  sendMessage({ message }): INotification {
     if (this.messages.length === this.MAX_MESSAGES) {
       this.hub.notifyMessageRemoved(this.messages.shift());
     }
-    this.messages.push(message);
-    this.hub.notifyMessageAdded(message);
+    const notification = { message, id: Date.now() };
+    this.messages.push(notification);
+    this.hub.notifyMessageAdded(notification);
+
+    return notification;
   }
 }
 

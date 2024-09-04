@@ -1,22 +1,15 @@
-import { useState } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './App.css'
+import MessageBlock from './pages/MessageBlock'
 
 function App() {
-  const [message, setMessage] = useState('')
-  const [collection, setCollection] = useState(['hi', 'bye'])
-
+  const queryClient = new QueryClient();
 
   return (
     <>
-
-      {collection.map(el => <p>{el}</p>)}
-
-      <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
-
-      <button onClick={() => {
-        setCollection([...collection, message])
-        setMessage('')
-      }}>send</button>
+      <QueryClientProvider client={queryClient}>
+        <MessageBlock />
+      </QueryClientProvider>
     </>
   )
 }

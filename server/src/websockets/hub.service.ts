@@ -1,3 +1,4 @@
+import { INotification } from '@models';
 import WebSocket from 'ws';
 
 class HubService {
@@ -15,6 +16,7 @@ class HubService {
     }
 
     private task(message: string): void {
+        console.error(this.wss);
         this.wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(message);
@@ -22,12 +24,12 @@ class HubService {
         });
     }
 
-    notifyMessageAdded(message: string): void {
-        this.task(JSON.stringify({ type: 'add', message }));
+    notifyMessageAdded(data: INotification): void {
+        this.task(JSON.stringify({ type: 'add', data }));
     }
 
-    notifyMessageRemoved(message: string): void {
-        this.task(JSON.stringify({ type: 'remove', message }));
+    notifyMessageRemoved(data: INotification): void {
+        this.task(JSON.stringify({ type: 'remove', data }));
     }
 }
 

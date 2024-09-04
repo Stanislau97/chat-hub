@@ -15,8 +15,8 @@ class ChatRoute implements IRoute {
   }
 
   private initializeRoutes(): void {
-    this.router.get(`${this.path}/`, this.chatController.getChat);
-    this.router.post(`${this.path}/`, this.chatController.setChat);
+    this.router.get(`${this.path}/`, this.chatController.getMessages);
+    this.router.post(`${this.path}/`, this.chatController.sendMessage);
   }
 }
 

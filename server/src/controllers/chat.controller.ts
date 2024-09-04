@@ -9,19 +9,19 @@ class ChatController {
     this.chatService = new ChatService(hub);
   }
 
-  getChat = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getMessages = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const messages = this.chatService.getChat();
+      const messages = this.chatService.getMessages();
       res.status(200).send(messages);
     } catch (error) {
       next(error);
     }
   };
 
-  setChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  sendMessage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const chat = this.chatService.setChat(req.body);
-      res.status(200).send(chat);
+      const message = this.chatService.sendMessage(req.body);
+      res.status(200).send(message);
     } catch (error) {
       next(error);
     }
